@@ -1,6 +1,7 @@
 package lexer;
 
-public final class ScannerCore {
+public final class ScannerCore
+{
     private final String src;
     private int cur = 0;
     private int line = 1;
@@ -10,20 +11,47 @@ public final class ScannerCore {
     private int startLine = 1;
     private int startCol = 1;
 
-    public ScannerCore(String src) { this.src = src; }
 
-    public boolean isAtEnd() { return cur >= src.length(); }
-    public char peek() { return isAtEnd() ? '\0' : src.charAt(cur); }
-    public char peekNext() { return (cur + 1 >= src.length()) ? '\0' : src.charAt(cur + 1); }
+    public ScannerCore(String src)
+    {
+        this.src = src;
+    }
 
-    public char advance() {
+    public boolean isAtEnd()
+    {
+        return cur >= src.length();
+    }
+
+    public char peek()
+    {
+        return isAtEnd() ? '\0' : src.charAt(cur);
+    }
+
+    public char peekNext()
+    {
+        return (cur + 1 >= src.length()) ? '\0' : src.charAt(cur + 1);
+    }
+
+    public char advance()
+    {
         char c = src.charAt(cur++);
-        if (c == '\n') { line++; col = 1; } else { col++; }
+        if (c == '\n')
+        {
+            line++; col = 1;
+        }
+        else
+        {
+            col++;
+        }
         return c;
     }
 
-    public boolean match(char expected) {
-        if (isAtEnd() || src.charAt(cur) != expected) return false;
+    public boolean match(char expected)
+    {
+        if (isAtEnd() || src.charAt(cur) != expected)
+        {
+            return false;
+        }
         cur++; col++;
         return true;
     }

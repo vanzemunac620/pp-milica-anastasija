@@ -1,0 +1,5 @@
+beat x = 5;
+groove y = 3;
+jam
+    smoothCriminal add(x, y);
+jamOut
