@@ -20,26 +20,28 @@ public class Lexer
     }
 
     private static final Map<String, TokenType> KEYWORDS = Map.ofEntries(
-            Map.entry("beat", TokenType.INT),//moonSteps?
-            Map.entry("groove", TokenType.FLOAT),
-            Map.entry("truth", TokenType.BOOL), //bad, lieBecomesTheTruth, justRememberToAlwaysThinkTwice, doThinkTwice
-            Map.entry("lyric", TokenType.STRING), //annie, smoothCriminal, sing
+            Map.entry("heehee", TokenType.INT),
+            Map.entry("ow", TokenType.FLOAT),
+            Map.entry("blackOrWhite", TokenType.BOOL), //bad, justRememberToAlwaysThinkTwice, doThinkTwice
+            Map.entry("shooCaChooCa", TokenType.STRING), //annie, smoothCriminal, sing
+            Map.entry("shooCa", TokenType.CHAR),
             Map.entry("jam", TokenType.BEGIN), //hitTheFloor, let'sDance
             Map.entry("jamOut", TokenType.END),
             Map.entry("smoothCriminal", TokenType.FUNCTION),
-            Map.entry("thriller", TokenType.IF), //beatIt, blackOrWhite, annieAreYouOkay
-            Map.entry("blackOrWhite", TokenType.OR), //eitherWay
+            Map.entry("annieAreYouOkay", TokenType.IF),
+            Map.entry("eitherWay", TokenType.OR),
             Map.entry("fightForYourLife", TokenType.ELSE),
             Map.entry("justBeatIt", TokenType.FOR), //loopMoon
             Map.entry("stayGroovy", TokenType.WHILE),
             Map.entry("moves", TokenType.GOES), //carryMeThere
             Map.entry("from", TokenType.FROM), //ofTheWall
             Map.entry("glideTo", TokenType.TO), // moonTo
-            Map.entry("call", TokenType.CALL), //doIt, action, liftMe
+            Map.entry("shamona", TokenType.CALL), //doIt, action, liftMe,rockWithYou, shamona
             Map.entry("moonWalk", TokenType.RETURN),
             Map.entry("and", TokenType.AND),
-            Map.entry("not", TokenType.NOT),
-            Map.entry("array", TokenType.ARRAY)
+            Map.entry("lieBecomesTheTruth", TokenType.NOT),
+            Map.entry("array", TokenType.ARRAY),
+            Map.entry("freeze", TokenType.BREAK)
     );
 
 /*    private static final Map<TokenType, String> TOKEN_PATTERNS = Map.ofEntries(
