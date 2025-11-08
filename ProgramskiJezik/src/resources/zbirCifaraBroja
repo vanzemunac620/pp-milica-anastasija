@@ -1,0 +1,16 @@
+jam
+{
+    heehee broj = giveItToMe(heehee);
+    heehee zbir = 0;
+    heehee cifra;
+
+    stayGroovy (broj > 0)
+    {
+        cifra = broj % 10;
+        zbir = zbir + cifra;
+        broj = broj / 10;
+    }
+
+    singIt("Zbir cifara je: " + zbir);
+}
+jamOut

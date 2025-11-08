@@ -1,0 +1,25 @@
+smoothCriminal reverseNumber(heehee n)
+{
+    heehee reversed = 0;
+
+    stayGroovy (n > 0)
+    {
+        heehee digit = n % 10;
+        reversed = reversed * 10 + digit;
+        n = n / 10;
+    }
+
+    moonWalk reversed;
+}
+
+
+jam
+{
+    singIt("Unesi broj: ");
+    heehee broj = giveItToMe(heehee);
+
+    heehee obrnut = shamona reverseNumber(broj);
+
+    singIt("Obrnuti broj je: " + obrnut);
+}
+jamOut
