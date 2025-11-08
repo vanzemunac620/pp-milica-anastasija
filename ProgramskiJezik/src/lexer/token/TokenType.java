@@ -10,5 +10,6 @@ public enum TokenType
     ASSIGN,
     AND, NOT,
     ARRAY,
-    NEWLINE, EOF
+    NEWLINE, EOF,
+    PROGRAM, REMINDER
 }
