@@ -1,0 +1,16 @@
+jam
+{
+    heehee n = giveItToMe(heehee);
+
+    gangheehee niz = giveItToMe(heehee, n);
+
+    heehee suma = 0;
+
+    justBeatIt (heehee i = 0; i glideTo n-1; i moves 1)
+    {
+        suma = suma + niz[i];
+    }
+
+    singIt("Suma elemenata niza je: " + suma);
+}
+jamOut
