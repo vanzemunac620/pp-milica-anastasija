@@ -19,7 +19,7 @@ public final class ParserAst {
         while (match(NEWLINE)) {}
 
         Ast.Program p;
-        if (check(BEGIN) && checkNext(PROGRAM)) {
+        if (check(BEGIN)) {
             p = parseExplicitProgram();
         } else {
             p = parseImplicitProgram();
@@ -31,12 +31,10 @@ public final class ParserAst {
 
     // explicit_program = BEGIN PROGRAM NL1 program_body END PROGRAM { NEWLINE } ;
     private Ast.Program parseExplicitProgram() {
-        consume(BEGIN, "expected BEGIN");
-        consume(PROGRAM, "expected PROGRAM");
+        consume(BEGIN, "expected jam");
         requireNL1();
         List<Ast.TopItem> items = parseProgramBody();
-        consume(END, "expected END");
-        consume(PROGRAM, "expected PROGRAM");
+        consume(END, "expected jamOut");
         while (match(NEWLINE)) {}
         return new Ast.Program(true, items);
     }
@@ -86,7 +84,7 @@ public final class ParserAst {
 
     // top_begin = BEGIN ( func_tail | if_tail | for_tail ) ;
     private Ast.TopItem parseTopBegin() {
-        consume(BEGIN, "expected BEGIN");
+        consume(BEGIN, "expected jam");
 
         if (match(FUNCTION)) {
             Ast.FuncDef f = parseFuncTailAfterFUNCTION();
@@ -98,7 +96,7 @@ public final class ParserAst {
             Stmt.BeginFor s = parseForTailAfterFOR();
             return new Ast.TopStmt(s);
         } else {
-            throw error(peek(), "expected FUNCTION or IF or FOR after BEGIN");
+            throw error(peek(), "expected FUNCTION or annieAreYouOkay or justBeatIt after jam");
         }
     }
 
@@ -115,8 +113,8 @@ public final class ParserAst {
 
         requireNL1();
         List<Stmt> body = parseBlock();
-        consume(END, "expected END");
-        consume(FUNCTION, "expected FUNCTION");
+        consume(END, "expected jamOut");
+        consume(FUNCTION, "expected smoothCriminal");
         return new Ast.FuncDef(name, params, ret, body);
     }
 
@@ -138,7 +136,7 @@ public final class ParserAst {
 
     // type = INT { "[]" } ;
     private Ast.Type parseType() {
-        Token base = consume(INT, "expected INT");
+        Token base = consume(INT, "expected heehee");
         int rank = 0;
         while (match(LBRACKET)) {
             consume(RBRACKET, "expected ']'");
@@ -149,7 +147,7 @@ public final class ParserAst {
 
     // var_decl = INT ( array_dims ident_list | ident_list ) ;
     private Stmt.VarDecl parseVarDecl() {
-        consume(INT, "expected INT");
+        consume(INT, "expected heehee");
         List<Expr> dims = new ArrayList<>();
         if (match(LBRACKET)) {
             dims.add(parseExpr());
@@ -191,13 +189,13 @@ public final class ParserAst {
 
     // begin_group = BEGIN ( if_tail | for_tail ) ;
     private Stmt parseBeginGroup() {
-        consume(BEGIN, "expected BEGIN");
+        consume(BEGIN, "expected jam");
         if (match(IF)) {
             return parseIfTailAfterIF();
         } else if (match(FOR)) {
             return parseForTailAfterFOR();
         } else {
-            throw error(peek(), "expected IF or FOR after BEGIN");
+            throw error(peek(), "expected annieAreYouOkay or justBeatIt after jam");
         }
     }
 
@@ -212,7 +210,7 @@ public final class ParserAst {
 
         List<Stmt.BeginIf.Arm> orArms = new ArrayList<>();
         while (match(OR)) {
-            consume(IF, "expected IF");
+            consume(IF, "expected annieAreYouOkay");
             consume(LPAREN, "expected '('");
             Expr c = parseCond();
             consume(RPAREN, "expected ')'");
@@ -228,7 +226,7 @@ public final class ParserAst {
         }
 
         consume(END, "expected END");
-        consume(IF, "expected IF");
+        consume(IF, "expected annieAreYouOkay");
         return new Stmt.BeginIf(ifArm, orArms, elseBlock);
     }
 
@@ -236,16 +234,16 @@ public final class ParserAst {
     private Stmt.BeginFor parseForTailAfterFOR() {
         consume(LPAREN, "expected '('");
         Token var = consume(IDENT, "expected loop variable");
-        consume(GOES, "expected MOVES");
-        consume(FROM, "expected FROM");
+        consume(GOES, "expected moves");
+        consume(FROM, "expected from");
         Expr from = parseAExpr();
-        consume(TO, "expected TO");
+        consume(TO, "expected glideTo");
         Expr to = parseAExpr();
         consume(RPAREN, "expected ')'");
         requireNL1();
         List<Stmt> body = parseBlock();
         consume(END, "expected END");
-        consume(FOR, "expected FOR");
+        consume(FOR, "expected justBeatIt");
         return new Stmt.BeginFor(var, from, to, body);
     }
 
@@ -257,7 +255,7 @@ public final class ParserAst {
 
     // call_expr = CALL IDENT "(" [ args ] ")" ;
     private Expr.Call parseCallExpr() {
-        Token callTok = consume(CALL, "expected CALL");
+        Token callTok = consume(CALL, "expected shamona");
         Token name = consume(IDENT, "expected function name");
         consume(LPAREN, "expected '('");
         List<Expr> args = new ArrayList<>();
@@ -282,7 +280,7 @@ public final class ParserAst {
     // assign_stmt = expr_no_call ASSIGN lvalue ;
     private Stmt parseAssignStmt() {
         Expr left = parseExprNoCall();
-        consume(ASSIGN, "expected '->'");
+        consume(ASSIGN, "expected '='");
         Stmt.LValue lv = parseLValue();
         return new Stmt.Assign(left, lv);
     }
@@ -306,7 +304,7 @@ public final class ParserAst {
     private Expr parseAExpr() {
         if (check(CALL)) return parseCallExpr();
         Expr left = parseAtom();
-        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, REMINDER /* swap to PERCENT if needed */)) {
+        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, PERCENT /* swap to PERCENT if needed */)) {
             Token op = previous();
             Expr right = parseAtom();
             return new Expr.Binary(left, op, right);
@@ -319,7 +317,7 @@ public final class ParserAst {
 
     private Expr parseAExprNoCall() {
         Expr left = parseAtom();
-        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, REMINDER /* or PERCENT */)) {
+        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, PERCENT)) {
             Token op = previous();
             Expr right = parseAtom();
             return new Expr.Binary(left, op, right);

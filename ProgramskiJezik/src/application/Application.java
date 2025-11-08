@@ -62,12 +62,6 @@ public class Application
 
             System.out.println(TokenFormatter.formatList(tokens));
 
-            /*
-            RecognizerParser recognizerParser = new RecognizerParser(tokens);
-            recognizerParser.parseProgram(); // zavrsava se ako uspesna parsira, u suprotnom baci error
-            System.out.println("Parsing finished successfully");
-            */
-
             ParserAst parser = new ParserAst(tokens);
             Ast.Program prog = parser.parseProgram();
 

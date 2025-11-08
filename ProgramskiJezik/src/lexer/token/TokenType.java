@@ -11,5 +11,4 @@ public enum TokenType
     AND, NOT,
     ARRAY,
     NEWLINE, EOF,
-    PROGRAM, REMINDER
 }
