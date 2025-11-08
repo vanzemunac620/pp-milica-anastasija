@@ -3,8 +3,8 @@ package parser.ast;
 import java.util.List;
 import lexer.token.Token;
 
-public final class Ast
-{
+public final class Ast {
+
     public static final class Program {
         public final boolean explicitProgram;
         public final List<TopItem> items;
@@ -39,7 +39,9 @@ public final class Ast
     public static final class Param {
         public final Token name;
         public final Type type;
-        public Param(Token name, Type type) { this.name = name; this.type = type; }
+        public Param(Token name, Type type) {
+            this.name = name; this.type = type;
+        }
     }
 
     public static final class Type {
