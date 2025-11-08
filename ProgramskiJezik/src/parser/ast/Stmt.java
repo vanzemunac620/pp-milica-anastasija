@@ -4,9 +4,10 @@ import lexer.token.Token;
 
 import java.util.List;
 
-public abstract class Stmt
-{
-    public interface Visitor<R> {
+public abstract class Stmt {
+
+    public interface Visitor<R>
+    {
         R visitVarDecl(VarDecl s);
         R visitReturn(Return s);
         R visitAssign(Assign s);
@@ -14,39 +15,58 @@ public abstract class Stmt
         R visitBeginIf(BeginIf s);
         R visitBeginFor(BeginFor s);
     }
+
     public abstract <R> R accept(Visitor<R> v);
 
     public static final class VarDecl extends Stmt {
         public final List<Expr> dims;
         public final List<Token> names;
-        public VarDecl(List<Expr> dims, List<Token> names) { this.dims = dims; this.names = names; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitVarDecl(this); }
+        public VarDecl(List<Expr> dims, List<Token> names) {
+            this.dims = dims; this.names = names;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitVarDecl(this);
+        }
     }
 
     public static final class Return extends Stmt {
         public final Expr expr;
-        public Return(Expr expr) { this.expr = expr; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitReturn(this); }
+        public Return(Expr expr) {
+            this.expr = expr;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitReturn(this);
+        }
     }
 
     public static final class Assign extends Stmt {
         public final Expr left;
         public final LValue lvalue;
-        public Assign(Expr left, LValue lvalue) { this.left = left; this.lvalue = lvalue; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitAssign(this); }
+        public Assign(Expr left, LValue lvalue) {
+            this.left = left; this.lvalue = lvalue;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitAssign(this);
+        }
     }
 
     public static final class CallStmt extends Stmt {
         public final Expr.Call call;
-        public CallStmt(Expr.Call call) { this.call = call; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitCallStmt(this); }
+        public CallStmt(Expr.Call call) {
+            this.call = call;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitCallStmt(this);
+        }
     }
 
     public static final class BeginIf extends Stmt {
         public static final class Arm {
             public final Expr cond;
             public final List<Stmt> block;
-            public Arm(Expr cond, List<Stmt> block) { this.cond = cond; this.block = block; }
+            public Arm(Expr cond, List<Stmt> block) {
+                this.cond = cond; this.block = block;
+            }
         }
         public final Arm ifArm;
         public final List<Arm> orIfArms;
@@ -54,7 +74,9 @@ public abstract class Stmt
         public BeginIf(Arm ifArm, List<Arm> orIfArms, List<Stmt> elseBlock) {
             this.ifArm = ifArm; this.orIfArms = orIfArms; this.elseBlock = elseBlock;
         }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitBeginIf(this); }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitBeginIf(this);
+        }
     }
 
     public static final class BeginFor extends Stmt {
@@ -71,6 +93,8 @@ public abstract class Stmt
     public static final class LValue {
         public final Token name;
         public final List<Expr> indices;
-        public LValue(Token name, List<Expr> indices) { this.name = name; this.indices = indices; }
+        public LValue(Token name, List<Expr> indices) {
+            this.name = name; this.indices = indices;
+        }
     }
 }
