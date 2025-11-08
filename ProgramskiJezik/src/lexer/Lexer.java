@@ -36,12 +36,14 @@ public class Lexer
             Map.entry("moves", TokenType.GOES), //carryMeThere
             Map.entry("from", TokenType.FROM), //ofTheWall
             Map.entry("glideTo", TokenType.TO), // moonTo
-            Map.entry("shamona", TokenType.CALL), //doIt, action, liftMe,rockWithYou, shamona
+            Map.entry("shamona", TokenType.CALL), //doIt, action, liftMe,rockWithYou
             Map.entry("moonWalk", TokenType.RETURN),
             Map.entry("and", TokenType.AND),
-            Map.entry("lieBecomesTheTruth", TokenType.NOT),
+            Map.entry("lieBecomesTheTruth", TokenType.NOT), //notMyLove, notMySon
             Map.entry("array", TokenType.ARRAY),
-            Map.entry("freeze", TokenType.BREAK)
+            Map.entry("freeze", TokenType.BREAK),
+            Map.entry("white", TokenType.TRUE),
+            Map.entry("black", TokenType.FALSE)
     );
 
 /*    private static final Map<TokenType, String> TOKEN_PATTERNS = Map.ofEntries(
