@@ -6,7 +6,7 @@ smoothCriminal Fibonacci(heehee n)
     }
     fightForYourLife
     {
-        annieAreYouOkay (n == 1 || n == 2)
+        annieAreYouOkay (n == 1 eitherWay n == 2)
         {
             moonWalk 1;
         }

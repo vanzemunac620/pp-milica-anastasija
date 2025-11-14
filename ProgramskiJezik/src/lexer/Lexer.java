@@ -79,9 +79,12 @@ public class Lexer
             case ')' -> add(TokenType.RPAREN);
             case '[' -> add(TokenType.LBRACKET);
             case ']' -> add(TokenType.RBRACKET);
+            case '{' -> add(TokenType.LBRACE);
+            case '}' -> add(TokenType.RBRACE);
             case ',' -> add(TokenType.SEPARATOR_COMMA);
             case ':' -> add(TokenType.TYPE_COLON);
             case ';' -> add(TokenType.SEPARATOR_SEMICOLON);
+            case '"' -> add(TokenType.QUOTE);
             case '+' -> add(TokenType.ADD);
             case '-' -> add(TokenType.SUBTRACT);
             case '*' -> add(TokenType.MULTIPLY);

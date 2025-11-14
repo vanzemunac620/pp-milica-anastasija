@@ -14,35 +14,40 @@ public final class ParserAst {
 
     public ParserAst(List<Token> tokens) { this.tokens = tokens; }
 
-    // program = { NEWLINE } ( explicit_program | implicit_program ) EOF ;
+    //
     public Ast.Program parseProgram() {
         while (match(NEWLINE)) {}
 
-        Ast.Program p;
-        if (check(BEGIN)) {
-            p = parseExplicitProgram();
-        } else {
-            p = parseImplicitProgram();
+        Ast.Program p = null;
+        if (check(BEGIN)) {     //mora da proveri da li pocinje sa smoothCriminal ili sa jam, jer ne moze kod da se pise van funkcije
+            p = parseJamProgram();
+        }
+        else if(check(FUNCTION)){
+            p = parseFunctionProgram();
         }
 
         consume(EOF, "expected EOF");
         return p;
     }
 
-    // explicit_program = BEGIN PROGRAM NL1 program_body END PROGRAM { NEWLINE } ;
-    private Ast.Program parseExplicitProgram() {
+
+    private Ast.Program parseJamProgram() {
         consume(BEGIN, "expected jam");
-        requireNL1();
+        //requireNL1();
         List<Ast.TopItem> items = parseProgramBody();
         consume(END, "expected jamOut");
         while (match(NEWLINE)) {}
         return new Ast.Program(true, items);
     }
 
-    // implicit_program = program_body ;
-    private Ast.Program parseImplicitProgram() {
+
+    private Ast.Program parseFunctionProgram() {
+        consume(FUNCTION, "expected function");
+        //requireNL1();
         List<Ast.TopItem> items = parseProgramBody();
-        return new Ast.Program(false, items);
+        consume(RBRACE, "expected jamOut");
+        while (match(NEWLINE)) {}
+        return new Ast.Program(true, items);
     }
 
     // program_body = [ top_item { NL1 top_item } [ NL1 ] ] ;
@@ -51,11 +56,11 @@ public final class ParserAst {
         if (startsTopItem()) {
             items.add(parseTopItem());
             while (check(NEWLINE)) {
-                requireNL1();
+                //requireNL1();
                 if (!startsTopItem()) break;
                 items.add(parseTopItem());
             }
-            if (check(NEWLINE)) requireNL1();
+            //if (check(NEWLINE)) requireNL1();
         }
         return items;
     }
@@ -84,7 +89,7 @@ public final class ParserAst {
 
     // top_begin = BEGIN ( func_tail | if_tail | for_tail ) ;
     private Ast.TopItem parseTopBegin() {
-        consume(BEGIN, "expected jam");
+        //consume(BEGIN, "expected jam");
 
         if (match(FUNCTION)) {
             Ast.FuncDef f = parseFuncTailAfterFUNCTION();
@@ -100,7 +105,7 @@ public final class ParserAst {
         }
     }
 
-    // func_tail = FUNCTION IDENT "(" [ params ] ")" ":" type NL1 block END FUNCTION ;
+    // func_tail = FUNCTION IDENT "(" [ params ] ")" ":" type {code body} END FUNCTION ;
     private Ast.FuncDef parseFuncTailAfterFUNCTION() {
         Token name = consume(IDENT, "expected function name");
         consume(LPAREN, "expected '('");
@@ -108,12 +113,12 @@ public final class ParserAst {
         if (!check(RPAREN)) params = parseParams();
         consume(RPAREN, "expected ')'");
 
-        Ast.Type ret = match(TYPE_COLON) ? parseType() : new Ast.Type(Ast.Type.Kind.VOID, null, 0);
+        Ast.Type ret = match(LBRACE) ? parseType() : new Ast.Type(Ast.Type.Kind.VOID, null, 0);
         // implicit void has no Token
 
-        requireNL1();
+        //requireNL1();
         List<Stmt> body = parseBlock();
-        consume(END, "expected jamOut");
+        consume(RBRACE, "expected '}'");
         consume(FUNCTION, "expected smoothCriminal");
         return new Ast.FuncDef(name, params, ret, body);
     }
@@ -126,11 +131,11 @@ public final class ParserAst {
         return ps;
     }
 
-    // param = IDENT ":" type ;
+    // param = type IDENT ;
     private Ast.Param parseParam() {
-        Token name = consume(IDENT, "expected parameter name");
-        consume(TYPE_COLON, "expected ':'");
         Ast.Type t = parseType();
+        Token name = consume(IDENT, "expected parameter name");
+        //consume(TYPE_COLON, "expected ':'");
         return new Ast.Param(name, t);
     }
 
@@ -173,7 +178,7 @@ public final class ParserAst {
         List<Stmt> out = new ArrayList<>();
         while (startsStmtInBlock()) {
             out.add(parseStmt());
-            requireNL1();
+            //requireNL1();
         }
         return out;
     }
@@ -204,7 +209,7 @@ public final class ParserAst {
         consume(LPAREN, "expected '('");
         Expr cond = parseCond();
         consume(RPAREN, "expected ')'");
-        requireNL1();
+        consume(LBRACE, "expected '{'");
         List<Stmt> first = parseBlock();
         Stmt.BeginIf.Arm ifArm = new Stmt.BeginIf.Arm(cond, first);
 
@@ -214,18 +219,18 @@ public final class ParserAst {
             consume(LPAREN, "expected '('");
             Expr c = parseCond();
             consume(RPAREN, "expected ')'");
-            requireNL1();
+
             List<Stmt> b = parseBlock();
             orArms.add(new Stmt.BeginIf.Arm(c, b));
         }
 
         List<Stmt> elseBlock = null;
         if (match(ELSE)) {
-            requireNL1();
+
             elseBlock = parseBlock();
         }
 
-        consume(END, "expected END");
+        consume(RBRACE, "expected '}'");
         consume(IF, "expected annieAreYouOkay");
         return new Stmt.BeginIf(ifArm, orArms, elseBlock);
     }
@@ -240,9 +245,9 @@ public final class ParserAst {
         consume(TO, "expected glideTo");
         Expr to = parseAExpr();
         consume(RPAREN, "expected ')'");
-        requireNL1();
+        consume(LBRACE, "expected '{");
         List<Stmt> body = parseBlock();
-        consume(END, "expected END");
+        consume(RBRACE, "expected }");
         consume(FOR, "expected justBeatIt");
         return new Stmt.BeginFor(var, from, to, body);
     }

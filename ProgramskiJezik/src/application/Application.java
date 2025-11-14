@@ -49,14 +49,16 @@ public class Application
     }*/
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        /*if (args.length != 1) {
             System.err.println("Usage: java main.Application <source-file>");
             System.exit(64);
-        }
+        }*/
         Path inputFile = null;
         try {
-            inputFile = Paths.get(args[0]);
+            //inputFile = Paths.get(args[0]);
+            inputFile = Paths.get("ProgramskiJezik/src/resources/fibonaci");
             String code = Files.readString(inputFile);
+
             Lexer lexer = new Lexer(code);
             List<Token> tokens = lexer.scanTokens();
 
