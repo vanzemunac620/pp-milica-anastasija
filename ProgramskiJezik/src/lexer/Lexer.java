@@ -22,24 +22,24 @@ public class Lexer
     private static final Map<String, TokenType> KEYWORDS = Map.ofEntries(
             Map.entry("heehee", TokenType.INT),
             Map.entry("ow", TokenType.FLOAT),
-            Map.entry("blackOrWhite", TokenType.BOOL), //bad, justRememberToAlwaysThinkTwice, doThinkTwice
-            Map.entry("shooCaChooCa", TokenType.STRING), //annie, smoothCriminal, sing
+            Map.entry("blackOrWhite", TokenType.BOOL),
+            Map.entry("shooCaChooCa", TokenType.STRING),
             Map.entry("shooCa", TokenType.CHAR),
-            Map.entry("jam", TokenType.BEGIN), //hitTheFloor, let'sDance
+            Map.entry("jam", TokenType.BEGIN),
             Map.entry("jamOut", TokenType.END),
             Map.entry("smoothCriminal", TokenType.FUNCTION),
             Map.entry("annieAreYouOkay", TokenType.IF),
             Map.entry("eitherWay", TokenType.OR),
             Map.entry("fightForYourLife", TokenType.ELSE),
-            Map.entry("justBeatIt", TokenType.FOR), //loopMoon
+            Map.entry("justBeatIt", TokenType.FOR),
             Map.entry("stayGroovy", TokenType.WHILE),
-            Map.entry("moves", TokenType.GOES), //carryMeThere
-            Map.entry("from", TokenType.FROM), //ofTheWall
-            Map.entry("glideTo", TokenType.TO), // moonTo
-            Map.entry("shamona", TokenType.CALL), //doIt, action, liftMe,rockWithYou
+            Map.entry("moves", TokenType.GOES),
+            Map.entry("from", TokenType.FROM),
+            Map.entry("glideTo", TokenType.TO),
+            Map.entry("shamona", TokenType.CALL),
             Map.entry("moonWalk", TokenType.RETURN),
             Map.entry("and", TokenType.AND),
-            Map.entry("lieBecomesTheTruth", TokenType.NOT), //notMyLove, notMySon
+            Map.entry("lieBecomesTheTruth", TokenType.NOT),
             Map.entry("array", TokenType.ARRAY),
             Map.entry("freeze", TokenType.BREAK),
             Map.entry("white", TokenType.TRUE),
@@ -79,9 +79,12 @@ public class Lexer
             case ')' -> add(TokenType.RPAREN);
             case '[' -> add(TokenType.LBRACKET);
             case ']' -> add(TokenType.RBRACKET);
+            case '{' -> add(TokenType.LBRACE);
+            case '}' -> add(TokenType.RBRACE);
             case ',' -> add(TokenType.SEPARATOR_COMMA);
             case ':' -> add(TokenType.TYPE_COLON);
             case ';' -> add(TokenType.SEPARATOR_SEMICOLON);
+            case '"' -> add(TokenType.QUOTE);
             case '+' -> add(TokenType.ADD);
             case '-' -> add(TokenType.SUBTRACT);
             case '*' -> add(TokenType.MULTIPLY);

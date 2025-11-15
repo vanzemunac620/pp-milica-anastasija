@@ -1,0 +1,5 @@
+jam
+{
+    singIt("You've been hit by" "A smooth criminal");
+}
+jamOut

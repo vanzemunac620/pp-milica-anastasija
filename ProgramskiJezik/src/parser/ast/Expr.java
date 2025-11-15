@@ -18,27 +18,42 @@ public abstract class Expr
     public static final class Literal extends Expr {
         public final Token token;
         public final int value;
-        public Literal(Token token, int value) { this.token = token; this.value = value; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitLiteral(this); }
+        public Literal(Token token, int value) {
+            this.token = token; this.value = value;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitLiteral(this);
+        }
     }
 
     public static final class Ident extends Expr {
         public final Token name;
-        public Ident(Token name) { this.name = name; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitIdent(this); }
+        public Ident(Token name) {
+            this.name = name;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitIdent(this);
+        }
     }
 
     public static final class Index extends Expr {
         public final Token name;
         public final List<Expr> indices;
-        public Index(Token name, List<Expr> indices) { this.name = name; this.indices = indices; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitIndex(this); }
+        public Index(Token name, List<Expr> indices) {
+            this.name = name; this.indices = indices;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitIndex(this);
+        }
     }
 
     public static final class Grouping extends Expr {
         public final Expr inner;
-        public Grouping(Expr inner) { this.inner = inner; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitGrouping(this); }
+        public Grouping(Expr inner) {
+            this.inner = inner;
+        }
+        @Override public <R> R accept(Visitor<R> v) { return v.visitGrouping(this);
+        }
     }
 
     public static final class Call extends Expr {
@@ -55,7 +70,11 @@ public abstract class Expr
         public final Expr left;
         public final Token op;
         public final Expr right;
-        public Binary(Expr left, Token op, Expr right) { this.left = left; this.op = op; this.right = right; }
-        @Override public <R> R accept(Visitor<R> v) { return v.visitBinary(this); }
+        public Binary(Expr left, Token op, Expr right) {
+            this.left = left; this.op = op; this.right = right;
+        }
+        @Override public <R> R accept(Visitor<R> v) {
+            return v.visitBinary(this);
+        }
     }
 }

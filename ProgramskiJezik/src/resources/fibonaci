@@ -1,0 +1,38 @@
+smoothCriminal Fibonacci(heehee n)
+{
+    annieAreYouOkay (n <= 0)
+    {
+        moonWalk 0;
+    }
+    fightForYourLife
+    {
+        annieAreYouOkay (n == 1 eitherWay n == 2)
+        {
+            moonWalk 1;
+        }
+        fightForYourLife
+        {
+            heehee a = 1;
+            heehee b = 1;
+            heehee fib = 1;
+
+            justBeatIt (heehee i = 3; i glideTo n; i moves 1)
+            {
+                fib = a + b;
+                a = b;
+                b = fib;
+            }
+            moonWalk fib;
+        }
+    }
+}
+
+jam
+{
+    heehee n = giveItToMe(heehee);
+
+    heehee result = shamona Fibonacci(n);
+
+    singIt("Fibonacci broj: : " + result);
+}
+jamOut
