@@ -45,7 +45,7 @@ public final class Ast {
     }
 
     public static final class Type {
-        public enum Kind { INT, VOID }
+        public enum Kind { INT, VOID, FLOAT, CHAR, STRING, BOOL }
         public final Kind kind;
         public final Token baseType;
         public final int rank;

@@ -18,36 +18,27 @@ public final class ParserAst {
     public Ast.Program parseProgram() {
         while (match(NEWLINE)) {}
 
-        Ast.Program p = null;
-        if (check(BEGIN)) {     //mora da proveri da li pocinje sa smoothCriminal ili sa jam, jer ne moze kod da se pise van funkcije
-            p = parseJamProgram();
-        }
-        else if(check(FUNCTION)){
-            p = parseFunctionProgram();
-        }
+        Ast.Program p = parseImplicitProgram();
 
         consume(EOF, "expected EOF");
         return p;
     }
 
+//    private Ast.Program parseExplicitProgram() {
+//        consume(BEGIN, "expected BEGIN");
+//        consume(PROGRAM, "expected PROGRAM");
+//        requireNL1();
+//        List<Ast.TopItem> items = parseProgramBody();
+//        consume(END, "expected END");
+//        consume(PROGRAM, "expected PROGRAM");
+//        while (match(NEWLINE)) {}
+//        return new Ast.Program(true, items);
+//    }
 
-    private Ast.Program parseJamProgram() {
-        consume(BEGIN, "expected jam");
-        //requireNL1();
+    // implicit_program = program_body ;
+    private Ast.Program parseImplicitProgram() {
         List<Ast.TopItem> items = parseProgramBody();
-        consume(END, "expected jamOut");
-        while (match(NEWLINE)) {}
-        return new Ast.Program(true, items);
-    }
-
-
-    private Ast.Program parseFunctionProgram() {
-        consume(FUNCTION, "expected function");
-        //requireNL1();
-        List<Ast.TopItem> items = parseProgramBody();
-        consume(RBRACE, "expected jamOut");
-        while (match(NEWLINE)) {}
-        return new Ast.Program(true, items);
+        return new Ast.Program(false, items);
     }
 
     // program_body = [ top_item { NL1 top_item } [ NL1 ] ] ;
@@ -87,7 +78,7 @@ public final class ParserAst {
         }
     }
 
-    // top_begin = BEGIN ( func_tail | if_tail | for_tail ) ;
+    // top_begin = BEGIN ( func_tail | if_tail | for_tail ) ; FUNCKIJA NAMA NE TREBA (NA TAJ NACIN)
     private Ast.TopItem parseTopBegin() {
         //consume(BEGIN, "expected jam");
 
@@ -139,27 +130,43 @@ public final class ParserAst {
         return new Ast.Param(name, t);
     }
 
+    //parseDECL: (type -> identif -> = )return bool
+    //parseGANG gang -> parseDECL -> for({) -> ;
+    //parseGENERAL: parseDECL -> parseAssign
+
     // type = INT { "[]" } ;
+    //gang type IDENT = {params};
     private Ast.Type parseType() {
-        Token base = consume(INT, "expected heehee");
+        Token base;
+        Ast.Type type = null;
         int rank = 0;
-        while (match(LBRACKET)) {
+        if(check(INT)){ base = consume(INT, "expected heehee"); type = new Ast.Type(Ast.Type.Kind.INT, base, rank);}
+        else if(check(FLOAT)){ base = consume(FLOAT, "expected ow"); type = new Ast.Type(Ast.Type.Kind.FLOAT, base, rank);}
+        else if(check(CHAR)){ base = consume(CHAR, "expected shooCa"); type = new Ast.Type(Ast.Type.Kind.CHAR, base, rank);}
+        else if(check(STRING)){ base = consume(STRING, "expected shooCaChooCa"); type = new Ast.Type(Ast.Type.Kind.STRING, base, rank);}
+        else if(check(BOOL)){ base = consume(BOOL, "expected blackOrWhite"); type = new Ast.Type(Ast.Type.Kind.BOOL, base, rank);}
+
+        /*while (match(LBRACKET)) {
             consume(RBRACKET, "expected ']'");
             rank++;
-        }
-        return new Ast.Type(Ast.Type.Kind.INT, base, rank);
+        }*/
+        return type;
     }
 
     // var_decl = INT ( array_dims ident_list | ident_list ) ;
+    //var_decl : type IDENT = {array_elements};
     private Stmt.VarDecl parseVarDecl() {
-        consume(INT, "expected heehee");
+        Ast.Type type = parseType();
+        consume(IDENT, "expected identifier");
+        consume(EQ, "expected '=' in declaration");
         List<Expr> dims = new ArrayList<>();
-        if (match(LBRACKET)) {
+
+        if (match(LBRACE)) {
             dims.add(parseExpr());
-            consume(RBRACKET, "expected ']'");
-            while (match(LBRACKET)) {
+            consume(RBRACE, "expected '}' in array");
+            while (match(LBRACE)) {
                 dims.add(parseExpr());
-                consume(RBRACKET, "expected ']'");
+                consume(RBRACE, "expected '}' in multidimensional array");
             }
         }
         List<Token> names = parseIdentList();
@@ -173,12 +180,12 @@ public final class ParserAst {
         return ids;
     }
 
-    // block = { stmt NL1 } ;
+    // block = { stmt ; } ;
     private List<Stmt> parseBlock() {
         List<Stmt> out = new ArrayList<>();
         while (startsStmtInBlock()) {
             out.add(parseStmt());
-            //requireNL1();
+            consume(SEPARATOR_SEMICOLON, "expected ';");
         }
         return out;
     }
@@ -194,7 +201,7 @@ public final class ParserAst {
 
     // begin_group = BEGIN ( if_tail | for_tail ) ;
     private Stmt parseBeginGroup() {
-        consume(BEGIN, "expected jam");
+        //consume(BEGIN, "expected jam");
         if (match(IF)) {
             return parseIfTailAfterIF();
         } else if (match(FOR)) {
@@ -226,7 +233,6 @@ public final class ParserAst {
 
         List<Stmt> elseBlock = null;
         if (match(ELSE)) {
-
             elseBlock = parseBlock();
         }
 
@@ -283,7 +289,9 @@ public final class ParserAst {
     }
 
     // assign_stmt = expr_no_call ASSIGN lvalue ;
+    // type IDENT = expr_no_call;
     private Stmt parseAssignStmt() {
+
         Expr left = parseExprNoCall();
         consume(ASSIGN, "expected '='");
         Stmt.LValue lv = parseLValue();
@@ -370,18 +378,13 @@ public final class ParserAst {
 
     // ===== utilities =====
 
-    // NL1 = NEWLINE { NEWLINE }
-    private void requireNL1() {
-        consume(NEWLINE, "expected newline");
-        while (match(NEWLINE)) {}
-    }
 
     private boolean startsTopItem() {
         return check(BEGIN) || check(INT) || check(CALL) || check(INT_LIT) || check(IDENT) || check(LPAREN);
     }
 
     private boolean startsStmtInBlock() {
-        return check(INT) || check(RETURN) || check(CALL) || check(BEGIN) || check(INT_LIT) || check(IDENT) || check(LPAREN);
+        return check(BEGIN) || check(INT) || check(CALL) || check(INT_LIT) || check(IDENT) || check(LPAREN) || check(RETURN);
     }
 
     private boolean match(TokenType... types) {
