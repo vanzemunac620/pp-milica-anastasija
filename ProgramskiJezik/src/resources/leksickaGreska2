@@ -1,0 +1,9 @@
+jam
+{
+    heehee a = 12_34;
+    heehee b = 56abc;
+
+    singIt(a);
+    singIt(b);
+}
+jamOut

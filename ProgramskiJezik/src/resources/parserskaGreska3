@@ -1,0 +1,10 @@
+jam
+{
+    heehee n = 3;
+
+    justBeatIt (int i = 0; i < n)
+    {
+        singIt("Hee-hee");
+    }
+}
+jamOut

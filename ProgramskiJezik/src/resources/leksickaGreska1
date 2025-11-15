@@ -1,0 +1,13 @@
+jam
+{
+    heehee a$ = 5;
+    heehee count = 0;
+
+    justBeatIt(int i = 0; i < a$; i++)
+    {
+        count = count + 1;
+    }
+
+    singIt(count);
+}
+jamOut

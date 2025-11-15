@@ -1,0 +1,8 @@
+jam
+{
+    fightForYourLife
+    {
+        singIt("Hello world");
+    }
+}
+jamOut

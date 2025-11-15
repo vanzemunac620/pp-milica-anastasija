@@ -1,0 +1,7 @@
+jam
+{
+    heehee x = 10 5;
+
+    singIt(x);
+}
+jamOut
