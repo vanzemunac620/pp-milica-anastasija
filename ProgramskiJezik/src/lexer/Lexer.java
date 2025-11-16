@@ -130,6 +130,7 @@ public class Lexer
             scanToken();
         }
         tokens.add(new Token(TokenType.EOF, "\0", null, sc.getLine(), sc.getCol(), sc.getCol()));
+        tokens.removeIf(t -> t.type == TokenType.NEWLINE);
         return tokens;
     }
 
