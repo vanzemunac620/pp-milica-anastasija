@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Scanner;
 
 public class Application
 {
@@ -53,10 +54,13 @@ public class Application
             System.err.println("Usage: java main.Application <source-file>");
             System.exit(64);
         }*/
+        Scanner in = new Scanner(System.in);
+        System.out.println("unesite zeljeni fajl");
+        String filePath = "ProgramskiJezik/src/resources/" + in.nextLine();
         Path inputFile = null;
         try {
             //inputFile = Paths.get(args[0]);
-            inputFile = Paths.get("ProgramskiJezik/src/resources/sumaNiza");
+            inputFile = Paths.get(filePath);
             String code = Files.readString(inputFile);
 
             Lexer lexer = new Lexer(code);

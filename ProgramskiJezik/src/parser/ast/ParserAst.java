@@ -202,7 +202,6 @@ public final class ParserAst {
             if((!(out.getLast() instanceof Stmt.BeginForClassic) || !(out.getLast() instanceof Stmt.BeginIf
                 || !(out.getLast() instanceof Stmt.BeginWhile)))
                     && !check(RBRACE)){
-                System.out.println(out.getLast().toString());
                 consume(SEPARATOR_SEMICOLON, "expected ';'");
             }
         }
