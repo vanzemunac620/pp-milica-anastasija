@@ -1,8 +1,6 @@
 jam
-{
 
     ow 3abc = 2.5;
     singIt(3abc);
 
-}
 jamOut

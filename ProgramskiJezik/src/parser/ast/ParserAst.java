@@ -39,6 +39,13 @@ public final class ParserAst {
         while (match(NEWLINE)) {}
         return new Ast.Program(true, items);
     }*/
+    private Ast.Program parseJam()
+    {
+        consume(BEGIN, "expected BEGIN");
+        List<Stmt> block = parseBlock();
+        consume(END, "expected END");
+        return new Ast.Program(false, null);
+    }
 
     // implicit_program = program_body ;
     private Ast.Program parseImplicitProgram() {
@@ -63,9 +70,10 @@ public final class ParserAst {
     private Ast.TopItem parseTopItem() {
         if (check(FUNCTION)) {
             return parseTopBegin();
-        } else {
+        } else if(check(BEGIN)) {
             return parseTopSimple();
         }
+        else return null;
     }
 
     // top_simple = var_decl | call_and_maybe_assign | assign_stmt ;
@@ -92,7 +100,7 @@ public final class ParserAst {
             Stmt.BeginIf s = parseIfTailAfterIF();
             return new Ast.TopStmt(s);
         } else if (match(FOR)) {
-            Stmt.BeginFor s = parseForTailAfterFOR();
+            Stmt.BeginForClassic s = parseForTailAfterFOR();
             return new Ast.TopStmt(s);
         } else {
             throw error(peek(), "expected FUNCTION or annieAreYouOkay or justBeatIt after jam");
@@ -110,7 +118,7 @@ public final class ParserAst {
         consume(LPAREN, "expected '('");
         List<Ast.Param> params = new ArrayList<>();
         if (!check(RPAREN)) params = parseParams();
-        consume(RPAREN, "expected ')'");
+        consume(RPAREN, "expected ')' after function");
         while(match(NEWLINE)){}
         consume(LBRACE, "expected '{'");
         List<Stmt> body = parseBlock();
@@ -161,8 +169,8 @@ public final class ParserAst {
         boolean array = false;
         if(check(ARRAY)) {advance(); array = true;}
         Ast.Type type = parseType();
-        consume(IDENT, "expected identifier");
-        consume(EQ, "expected '=' in declaration");
+        List<Token> names = parseIdentList();
+        consume(ASSIGN, "expected '=' in declaration");
         List<Expr> dims = new ArrayList<>();
 
         if (array && match(LBRACE)) {
@@ -176,14 +184,13 @@ public final class ParserAst {
         else if(!array) dims.add(parseExpr());
         else consume(LPAREN, "expected '{'");
 
-        List<Token> names = parseIdentList();
         return new Stmt.VarDecl(dims, names);
     }
 
     private List<Token> parseIdentList() {
         List<Token> ids = new ArrayList<>();
-        ids.add(consume(IDENT, "expected identifier"));
-        while (match(SEPARATOR_COMMA)) ids.add(consume(IDENT, "expected identifier"));
+        ids.add(consume(IDENT, "expected identifier (parseIdentList,1)"));
+        while (match(SEPARATOR_COMMA)) ids.add(consume(IDENT, "expected identifier (parseIdentList,2)"));
         return ids;
     }
 
@@ -192,7 +199,12 @@ public final class ParserAst {
         List<Stmt> out = new ArrayList<>();
         while (startsStmtInBlock()) {
             out.add(parseStmt());
-            consume(SEPARATOR_SEMICOLON, "expected ';");
+            if((!(out.getLast() instanceof Stmt.BeginForClassic) || !(out.getLast() instanceof Stmt.BeginIf
+                || !(out.getLast() instanceof Stmt.BeginWhile)))
+                    && !check(RBRACE)){
+                System.out.println(out.getLast().toString());
+                consume(SEPARATOR_SEMICOLON, "expected ';'");
+            }
         }
         return out;
     }
@@ -205,6 +217,8 @@ public final class ParserAst {
         if (check(BEGIN)) return parseBeginGroup();
         if(match(IF)) return parseIfTailAfterIF();
         if(match(FOR)) return parseForTailAfterFOR();
+        if(check(IDENT)) return parseAssignStmt();
+
         return parseAssignStmt();
     }
 
@@ -222,53 +236,91 @@ public final class ParserAst {
 
     // if_tail = IF "(" cond ")" NL1 block { OR IF "(" cond ")" NL1 block } [ ELSE NL1 block ] END IF ;
     private Stmt.BeginIf parseIfTailAfterIF() {
-        consume(LPAREN, "expected '('");
+        consume(LPAREN, "expected '(' at start of if");
         Expr cond = parseCond();
-        consume(RPAREN, "expected ')'");
+
+        consume(RPAREN, "expected ') at end of if'");
         consume(LBRACE, "expected '{' at start of if");
         List<Stmt> first = parseBlock();
         Stmt.BeginIf.Arm ifArm = new Stmt.BeginIf.Arm(cond, first);
 
         List<Stmt.BeginIf.Arm> orArms = new ArrayList<>();
-        while (match(OR)) {
-            consume(IF, "expected annieAreYouOkay");
-            consume(LPAREN, "expected '(' after if");
-            Expr c = parseCond();
-            consume(RPAREN, "expected ')' after if");
-
-            List<Stmt> b = parseBlock();
-            orArms.add(new Stmt.BeginIf.Arm(c, b));
-        }
-        consume(RBRACE, "expected '}' after if");
         List<Stmt> elseBlock = null;
-        if (match(ELSE)) {
-            consume(LBRACE, "expected '{' at start of else");
-            elseBlock = parseBlock();
-            consume(RBRACE, "expected '}' after else");
+        consume(RBRACE, "expected '}' at end of if");
+        while (match(ELSE)) {
+            if(check(IF)) {
+                advance();
+                consume(LPAREN, "expected '(' after if");
+                Expr c = parseCond();
+                consume(RPAREN, "expected ')' after if");
+
+                consume(LBRACE, "expected '{' at start of else if");
+                List<Stmt> b = parseBlock();
+                consume(RBRACE, "expected '}' after else if");
+                orArms.add(new Stmt.BeginIf.Arm(c, b));
+            }
+            else{
+                consume(LBRACE, "expected '{' at start of else");
+                elseBlock = parseBlock();
+                consume(RBRACE, "expected '}' after else");
+            }
         }
+//
+//        if (match(ELSE)) {
+//            consume(LBRACE, "expected '{' at start of else");
+//            elseBlock = parseBlock();
+//            consume(RBRACE, "expected '}' after else");
+//        }
 
-
-        consume(IF, "expected annieAreYouOkay");
         return new Stmt.BeginIf(ifArm, orArms, elseBlock);
     }
 
-    // for_tail = FOR "(" IDENT GOES FROM aexpr TO aexpr ")" NL1 block END FOR ;
-    private Stmt.BeginFor parseForTailAfterFOR() {
-        consume(LPAREN, "expected '('");
-        Token var = consume(IDENT, "expected loop variable");
-        consume(GOES, "expected moves");
-        consume(FROM, "expected from");
-        Expr from = parseAExpr();
-        consume(TO, "expected glideTo");
-        Expr to = parseAExpr();
-        consume(RPAREN, "expected ')'");
-        consume(LBRACE, "expected '{");
+    private Stmt.BeginWhile parseWhileStmt() {
+        consume(WHILE, "expected 'stayGroovy'");
+
+        consume(LPAREN, "expected '(' after stayGroovy");
+        Expr cond = parseCond();
+        consume(RPAREN, "expected ')' after condition");
+
+        consume(LBRACE, "expected '{' to start while body");
         List<Stmt> body = parseBlock();
-        consume(RBRACE, "expected }");
-        consume(FOR, "expected justBeatIt");
-        return new Stmt.BeginFor(var, from, to, body);
+        consume(RBRACE, "expected '}' after while block");
+
+        return new Stmt.BeginWhile(cond, body);
+    }
+    //for =: for "(" ident = aexpr; ident glideTo aexpr; ident moves aexpr")" "{" block "}"
+    private Stmt.BeginForClassic parseForTailAfterFOR() {
+        consume(LPAREN, "expected '(' after justBeatIt");
+
+        Stmt.VarDecl init = parseVarDecl();
+        consume(SEPARATOR_SEMICOLON, "expected ';' after initialization");
+
+        Expr cond = parseCond();
+        consume(SEPARATOR_SEMICOLON, "expected ';' after condition");
+
+        Stmt.Assign step = parseIncrementOrAssign();
+        consume(RPAREN, "expected ')' after step expression");
+
+        consume(LBRACE, "expected '{' to begin loop body");
+        List<Stmt> body = parseBlock();
+        consume(RBRACE, "expected '}' after for body");
+
+        return new Stmt.BeginForClassic(init, cond, step, body);
     }
 
+    private Stmt.Assign parseIncrementOrAssign()
+    {
+        Token id = consume(IDENT, "expected loop variable");
+        if (match(INC))
+        {
+            return new Stmt.Assign(
+                    new Expr.Ident(id),
+                    new Stmt.LValue(id, List.of())
+            );
+        }
+        consume(ASSIGN, "expected '=' in loop increment");
+        return new Stmt.Assign(new Expr.Ident(id), parseLValue());
+    }
     private Stmt parseReturnStmt() {
         consume(RETURN, "expected moonWalk");
         Expr e = parseExpr();
@@ -285,7 +337,7 @@ public final class ParserAst {
             args.add(parseExpr());
             while (match(SEPARATOR_COMMA)) args.add(parseExpr());
         }
-        consume(RPAREN, "expected ')'");
+        consume(RPAREN, "expected ')' after function call");
         return new Expr.Call(callTok, name, args);
     }
 
@@ -302,16 +354,16 @@ public final class ParserAst {
     // assign_stmt = expr_no_call ASSIGN lvalue ;
     // type IDENT = expr_no_call;
     private Stmt parseAssignStmt() {
-
-        Expr left = parseExprNoCall();
-        consume(ASSIGN, "expected '='");
         Stmt.LValue lv = parseLValue();
+        consume(ASSIGN, "expected '='");
+        Expr left = parseExprNoCall();
+
         return new Stmt.Assign(left, lv);
     }
 
     // lvalue = IDENT { "[" expr "]" } ;
     private Stmt.LValue parseLValue() {
-        Token id = consume(IDENT, "expected identifier");
+        Token id = consume(IDENT, "expected identifier (parseLValue)");
         List<Expr> idx = new ArrayList<>();
         while (match(LBRACKET)) {
             idx.add(parseExpr());
@@ -328,7 +380,7 @@ public final class ParserAst {
     private Expr parseAExpr() {
         if (check(CALL)) return parseCallExpr();
         Expr left = parseAtom();
-        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, PERCENT /* swap to PERCENT if needed */)) {
+        if (match(ADD, SUBTRACT, MULTIPLY, DIVIDE, PERCENT)) {
             Token op = previous();
             Expr right = parseAtom();
             return new Expr.Binary(left, op, right);
@@ -384,6 +436,7 @@ public final class ParserAst {
         Token op = consumeOneOf("expected relational operator",
                 LT, LE, GT, GE, EQ, NEQ);
         Expr right = parseAExpr();
+
         return new Expr.Binary(left, op, right);
     }
 
@@ -396,7 +449,8 @@ public final class ParserAst {
 
     //ne moze funkcija u funkciji (za sada)
     private boolean startsStmtInBlock() {
-        return check(IF) || check(ELSE) || check(FOR) || check(BEGIN) || check(INT) || check(CALL) || check(INT_LIT) || check(IDENT) || check(LPAREN) || check(RETURN);
+        return check(IF) || check(ELSE) || check(FOR) || check(BEGIN) || check(INT) ||
+                check(CALL) || check(INT_LIT) || check(IDENT) || check(LPAREN) || check(RETURN);
     }
 
     private boolean match(TokenType... types) {

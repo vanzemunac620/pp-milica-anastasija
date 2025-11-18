@@ -1,5 +1,5 @@
 jam
-{
+
     heehee a$ = 5;
     heehee count = 0;
 
@@ -9,5 +9,5 @@ jam
     }
 
     singIt(count);
-}
+
 jamOut

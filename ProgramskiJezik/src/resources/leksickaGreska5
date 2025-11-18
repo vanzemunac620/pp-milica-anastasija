@@ -1,8 +1,6 @@
 jam
-{
 
     heehee shooCa = 5;
     singIt(shooCa);
 
-}
 jamOut

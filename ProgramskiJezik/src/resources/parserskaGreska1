@@ -1,10 +1,8 @@
 jam
-{
     heehee a = 5;
 
     annieAreYouOkay a > 3
     {
         singIt("Shamone!");
     }
-}
 jamOut

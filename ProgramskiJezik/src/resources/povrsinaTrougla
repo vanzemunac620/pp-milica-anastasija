@@ -1,16 +1,14 @@
-smoothCriminal povrsinaTrougla(ow osnovica, ow visina)
+smoothCriminal ow povrsinaTrougla(ow osnovica, ow visina)
 {
     ow povrsina = (osnovica * visina) / 2.0;
     moonWalk povrsina;
 }
 
 jam
-{
     ow a = giveItToMe(ow);
     ow h = giveItToMe(ow);      // Visina trougla
 
     ow P = shamona povrsinaTrougla(a, h);
 
     singIt("Povrsina trougla je: " + P);
-}
 jamOut

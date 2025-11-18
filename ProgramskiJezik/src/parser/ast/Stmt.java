@@ -14,6 +14,9 @@ public abstract class Stmt {
         R visitCallStmt(CallStmt s);
         R visitBeginIf(BeginIf s);
         R visitBeginFor(BeginFor s);
+        R visitBeginWhile(BeginWhile s);
+        R visitBeginForClassic(BeginForClassic s);
+
     }
 
     public abstract <R> R accept(Visitor<R> v);
@@ -88,6 +91,43 @@ public abstract class Stmt {
             this.var = var; this.from = from; this.to = to; this.body = body;
         }
         @Override public <R> R accept(Visitor<R> v) { return v.visitBeginFor(this); }
+    }
+
+    public static final class BeginForClassic extends Stmt
+    {
+        public final Stmt.VarDecl init;
+        public final Expr cond;
+        public final Stmt.Assign step;
+        public final List<Stmt> body;
+
+        public BeginForClassic(Stmt.VarDecl init, Expr cond, Stmt.Assign step, List<Stmt> body)
+        {
+            this.init = init;
+            this.cond = cond;
+            this.step = step;
+            this.body = body;
+        }
+
+        @Override
+        public <R> R accept(Visitor<R> v)
+        {
+            return v.visitBeginForClassic(this);
+        }
+    }
+
+    public static final class BeginWhile extends Stmt
+    {
+        public final Expr cond;
+        public final List<Stmt> body;
+        public BeginWhile(Expr cond, List<Stmt> body)
+        {
+            this.cond = cond;
+            this.body = body;
+        }
+        @Override public <R> R accept(Visitor<R> v)
+        {
+            return v.visitBeginWhile(this);
+        }
     }
 
     public static final class LValue {

@@ -56,7 +56,7 @@ public class Application
         Path inputFile = null;
         try {
             //inputFile = Paths.get(args[0]);
-            inputFile = Paths.get("ProgramskiJezik/src/resources/fibonaci");
+            inputFile = Paths.get("ProgramskiJezik/src/resources/sumaNiza");
             String code = Files.readString(inputFile);
 
             Lexer lexer = new Lexer(code);

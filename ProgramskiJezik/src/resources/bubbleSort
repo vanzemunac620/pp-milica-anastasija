@@ -1,11 +1,11 @@
-smoothCriminal bubbleSort(gangheehee niz)
+smoothCriminal gang heehee bubbleSort(gangheehee niz)
 {
     heehee n = giveItToMe(heehee);  // duzina niza
     heehee temp;
 
-    justBeatIt (heehee i = 0; i glideTo n-1; i moves 1)
+    justBeatIt (heehee i = 0; i <= n-1; i++)
     {
-        justBeatIt (heehee j = 0; j glideTo n-i-2; j moves 1)
+        justBeatIt (heehee j = 0; j <= n-i-2; j++)
         {
             annieAreYouOkay (niz[j] > niz[j + 1])
             {
@@ -20,8 +20,6 @@ smoothCriminal bubbleSort(gangheehee niz)
 }
 
 jam
-{
-
     heehee duzina = giveItToMe(heehee);
     gangheehee mojNiz = giveItToMe(heehee, duzina);
 
@@ -31,5 +29,4 @@ jam
     {
         singIt(sortiraniNiz[i]);
     }
-}
 jamOut

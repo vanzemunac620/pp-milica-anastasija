@@ -1,5 +1,4 @@
 jam
-{
     heehee broj = giveItToMe(heehee);
     heehee zbir = 0;
     heehee cifra;
@@ -12,5 +11,4 @@ jam
     }
 
     singIt("Zbir cifara je: " + zbir);
-}
 jamOut

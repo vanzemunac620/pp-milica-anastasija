@@ -1,5 +1,6 @@
-heehee x = 5;
-heehee y = 3;
+
 jam
+    heehee x = 5;
+    heehee y = 3;
     smoothCriminal add(x, y);
 jamOut

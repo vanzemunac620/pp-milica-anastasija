@@ -1,6 +1,4 @@
 jam
-{
     heehee [][] a = { {1, 2, 3}, {a, b, c, d} };
     singIt(a[1][2]);
-}
 jamOut

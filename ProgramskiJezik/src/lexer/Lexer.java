@@ -85,7 +85,10 @@ public class Lexer
             case ':' -> add(TokenType.TYPE_COLON);
             case ';' -> add(TokenType.SEPARATOR_SEMICOLON);
             case '"' -> add(TokenType.QUOTE);
-            case '+' -> add(TokenType.ADD);
+            case '+' -> {
+                if (sc.match('+')) add(TokenType.INC);
+                else add(TokenType.ADD);
+            }
             case '-' -> add(TokenType.SUBTRACT);
             case '*' -> add(TokenType.MULTIPLY);
             case '/' -> add(TokenType.DIVIDE);

@@ -1,5 +1,4 @@
 jam
-{
     heehee redovi = giveItToMe(heehee);
     heehee kolone = giveItToMe(heehee);
 
@@ -7,14 +6,13 @@ jam
 
     heehee suma = 0;
 
-    justBeatIt (heehee i = 0; i glideTo redovi-1; i moves 1)
+    justBeatIt (heehee i = 0; i <= redovi-1; i++)
     {
-        justBeatIt (heehee j = 0; j glideTo kolone-1; j moves 1)
+        justBeatIt (heehee j = 0; j glideTo kolone-1; j++)
         {
             suma = suma + matrica[i][j];
         }
     }
 
     singIt("Suma svih elemenata matrice je: " + suma);
-}
 jamOut

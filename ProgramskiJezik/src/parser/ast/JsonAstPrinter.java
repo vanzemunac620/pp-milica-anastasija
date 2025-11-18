@@ -198,4 +198,14 @@ public final class JsonAstPrinter implements
         o.set("body", body);
         return o;
     }
+
+    @Override
+    public JsonNode visitBeginWhile(Stmt.BeginWhile s) {
+        return null;
+    }
+
+    @Override
+    public JsonNode visitBeginForClassic(Stmt.BeginForClassic s) {
+        return null;
+    }
 }
